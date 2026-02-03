@@ -13,7 +13,7 @@ export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
 eval "$(starship init bash)"
 LIVE_COUNTER=$(ps a | awk '{print $2}' | grep -vi "tty*" | uniq | wc -l);
 if [ $LIVE_COUNTER -eq 1 ]; then
-     fastfetch
+     [ "$hostname"=='sidrat' ] && fastfetch -c ~/.config/fastfetch/laptop.jsonc || fastfetch -c ~/.config/fastfetch/desktop.jsonc
 fi
 
 #aliases
