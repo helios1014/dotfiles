@@ -45,7 +45,7 @@ require("lazy").setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function ()
       require("lualine").setup({
-        options = { theme = 'gruvbox' },
+        options = { theme = 'solarized_dark' },
         sections = {
           lualine_c = {
             {
@@ -245,30 +245,37 @@ require("lazy").setup({
 			signature = { enabled = true }
 		},
 	},
-  {
-    'neovim/nvim-lspconfig',
-      dependencies = {
-       {
-          "folke/lazydev.nvim",
-          ft = "lua", -- only load on lua files
-          opts = {
-            library = {
-              -- See the configuration section for more details
-              -- Load luvit types when the `vim.uv` word is found
-              { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-            },
-          },
-        },
-      },
-      config = function()
-        local capabilities = require('blink.cmp').get_lsp_capabilities()
-      require('lspconfig').lua_ls.setup{capabilities = capabilities}
-      require('lspconfig').bashls.setup{capabilities = capabilities}
-      require('lspconfig').ccls.setup{capabilities = capabilities}
-      require('lspconfig').jsonls.setup{capabilities = capabilities}
-      require('lspconfig').pylsp.setup{capabilities = capabilities}
-      end,
-    },
+--   {
+--     'neovim/nvim-lspconfig',
+--       dependencies = {
+--        {
+--           "folke/lazydev.nvim",
+--           ft = "lua", -- only load on lua files
+--           opts = {
+--             library = {
+--               -- See the configuration section for more details
+--               -- Load luvit types when the `vim.uv` word is found
+--               { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+--             },
+--           },
+--         },
+--       },
+--       config = function()
+--         local capabilities = require('blink.cmp').get_lsp_capabilities()
+--       require('lspconfig').lua_ls.setup{capabilities = capabilities}
+--       require('lspconfig').bashls.setup{capabilities = capabilities}
+--       require('lspconfig').ccls.setup{capabilities = capabilities}
+--       require('lspconfig').jsonls.setup{capabilities = capabilities}
+--       require('lspconfig').pylsp.setup{capabilities = capabilities}
+--       end,
+--     },
+  {'neovim/nvim-lspconfig'},
+
+  vim.lsp.enable('lua_ls'),
+  vim.lsp.enable('bashls'),
+  vim.lsp.enable('ccls'),
+  vim.lsp.enable('jsonls'),
+  vim.lsp.enable('pylsp'),
   checker = { enabled = true },
   { -- requires plugins in lua/plugins/treesitter.lua and lua/plugins/lsp.lua
     -- for complete functionality (language features)
