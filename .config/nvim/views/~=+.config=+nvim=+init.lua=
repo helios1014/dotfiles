@@ -1,0 +1,48 @@
+let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-1 siso=-1
+argglobal
+setlocal foldmethod=manual
+setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
+setlocal foldmarker={{{,}}}
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldenable
+silent! normal! zE
+sil! 1,16fold
+sil! 28,41fold
+sil! 42,62fold
+sil! 64,165fold
+sil! 166,169fold
+sil! 171,228fold
+sil! 232,248fold
+sil! 249,256fold
+sil! 229,256fold
+sil! 258,279fold
+sil! 280,298fold
+sil! 299,348fold
+sil! 349,378fold
+sil! 379,385fold
+sil! 386,431fold
+sil! 257,431fold
+sil! 435,467fold
+let &fdl = &fdl
+229
+sil! normal! zo
+229
+sil! normal! zc
+257
+sil! normal! zo
+257
+sil! normal! zc
+let s:l = 435 - ((2 * winheight(0) + 20) / 40)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 435
+normal! 0
+let &g:so = s:so_save | let &g:siso = s:siso_save
+set hlsearch
+nohlsearch
+doautoall SessionLoadPost
+" vim: set ft=vim :

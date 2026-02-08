@@ -24,6 +24,7 @@ vim.opt.rtp:prepend(lazypath)
 ----------------
 require("lazy").setup({
 
+  checker = { enabled = true },
   -- colorscheme
   {
     "ViViDboarder/wombat.nvim",
@@ -40,7 +41,7 @@ require("lazy").setup({
 
   -- statusline
   -- see https://www.youtube.com/watch?v=h9byIIiHOqs
-  { 
+  {
     "nvim-lualine/lualine.nvim",
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function ()
@@ -59,10 +60,9 @@ require("lazy").setup({
     end,
   },
 
-  -- you know the drill
 
-  -- Highlight, edit, and navigate code
-  { --ends on line 162 
+  -- nvim-treesitter Highlight, edit, and navigate code
+  {
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
@@ -165,11 +165,11 @@ require("lazy").setup({
 
   -- search selection via *
   -- This plugin allows you to select some text using Vim's visual mode, then hit * and # to search for it elsewhere in the file. 
-  { 'bronson/vim-visual-star-search' }, 
+  { 'bronson/vim-visual-star-search' },
 
 
+--nvim-telescope
   { -- Fuzzy Finder (files, lsp, etc) 
-  --ends on line 266
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
     branch = '0.1.x',
@@ -229,7 +229,8 @@ require("lazy").setup({
   -- LSP Plugins
     --python-lsp-server lua-language-server ccls bash-language-server vscode-json-languageserver
   -- automatically check for plugin updates
-	{
+--blink
+  {
 		'saghen/blink.cmp',
 		dependencies = 'rafamadriz/friendly-snippets',
 
@@ -245,30 +246,7 @@ require("lazy").setup({
 			signature = { enabled = true }
 		},
 	},
---   {
---     'neovim/nvim-lspconfig',
---       dependencies = {
---        {
---           "folke/lazydev.nvim",
---           ft = "lua", -- only load on lua files
---           opts = {
---             library = {
---               -- See the configuration section for more details
---               -- Load luvit types when the `vim.uv` word is found
---               { path = "${3rd}/luv/library", words = { "vim%.uv" } },
---             },
---           },
---         },
---       },
---       config = function()
---         local capabilities = require('blink.cmp').get_lsp_capabilities()
---       require('lspconfig').lua_ls.setup{capabilities = capabilities}
---       require('lspconfig').bashls.setup{capabilities = capabilities}
---       require('lspconfig').ccls.setup{capabilities = capabilities}
---       require('lspconfig').jsonls.setup{capabilities = capabilities}
---       require('lspconfig').pylsp.setup{capabilities = capabilities}
---       end,
---     },
+--nvim-lspconfig
   {'neovim/nvim-lspconfig'},
 
   vim.lsp.enable('lua_ls'),
@@ -276,7 +254,8 @@ require("lazy").setup({
   vim.lsp.enable('ccls'),
   vim.lsp.enable('jsonls'),
   vim.lsp.enable('pylsp'),
-  checker = { enabled = true },
+--quarto
+  --quarto-nvim
   { -- requires plugins in lua/plugins/treesitter.lua and lua/plugins/lsp.lua
     -- for complete functionality (language features)
     'quarto-dev/quarto-nvim',
@@ -298,6 +277,7 @@ require("lazy").setup({
     },
   },
 
+--jupytext
   { -- directly open ipynb files as quarto docuements
     -- and convert back behind the scenes
     'GCBallesteros/jupytext.nvim',
@@ -316,7 +296,7 @@ require("lazy").setup({
       },
     },
   },
-
+--slime
   { -- send code from python/r/qmd documets to a terminal or REPL
     -- like ipython, R, bash
     'jpalardy/vim-slime',
@@ -396,14 +376,14 @@ require("lazy").setup({
       vim.keymap.set('n', '<leader>ii', ':PasteImage<cr>', { desc = 'insert [i]mage from clipboard' })
     end,
   },
-
+--nabla.nvim
   { -- preview equations
     'jbyuki/nabla.nvim',
     keys = {
       { '<leader>qm', ':lua require"nabla".toggle_virt()<cr>', desc = 'toggle [m]ath equations' },
     },
   },
-
+--motlten-nvim with quarto config
   {
     'benlubas/molten-nvim',
     dev = false,
@@ -446,11 +426,45 @@ require("lazy").setup({
       )
     end,
   },
-}})
+}}
+)
 
 ----------------
 --- SETTINGS ---
 ----------------
+--winbar config
+_G.nk_list = function() --_G is adding var to table of global variables
+  local help = {
+    ["p"] = 'Preview', --Double qutes needed to ensure escaped charactes are accepted as str 
+    ["-"] = 'Up',
+    ["%"] ='New file',
+    ["d"] = "New Dir",
+    ["i"] = 'Cycle Views'
+
+  } 
+  local result = {}
+  for key, desc in pairs(help) do
+    table.insert(result, string.format('%%#Type# %s:%%#Normal# %s ', key, desc))
+    --%% is a literal percent 
+    --#Type# and #Normal# are built in color groups 
+    --%s means to format as string 
+    --spaces seperate each string to be formatted in .format
+  end
+  return table.concat(result, '|')
+end
+
+
+vim.api.nvim_create_autocmd({'FileType'},{
+  pattern = 'netrw',
+  callback = function()
+    vim.opt_local.winbar = '%{%v:lua.nk_list()%}' 
+    --%{%..%} evals as a lambda expression which evals to a winbar expression 
+    --%v:lua calls lua functions from vim script
+  end,
+  })
+    
+--vim.opt.winbar = 'hello'
+
 vim.opt.termguicolors = true -- Enable 24-bit RGB colors
 
 vim.opt.number = true        -- Show line numbers
@@ -483,5 +497,7 @@ vim.opt.wrap = true
 -- With a map leader it's possible to do extra key combinations
 -- i.e: <leader>w saves the current file
 vim.g.mapleader = ',' --set to \ by default
-
+vim.opt.viewdir = vim.env.HOME ..'/.config/nvim/views/'
+vim.cmd('au BufWinLeave ?* mkview')
+vim.cmd('au BufWinEnter ?* silent! loadview')
 
